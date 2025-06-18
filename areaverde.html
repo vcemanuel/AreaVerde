@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leitor QR → Google Forms</title>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+  <h2>Escaneie o QR Code</h2>
+  <div id="reader" style="width: 300px;"></div>
+
+  <script>
+    function parseData(qrText) {
+      const dados = {};
+      const partes = qrText.split(";");
+      partes.forEach(parte => {
+        const [chave, valor] = parte.split("=");
+        if (chave && valor) dados[chave.trim()] = valor.trim();
+      });
+      return dados;
+    }
+
+    function redirecionarParaForms(dados) {
+      const formBase = "https://docs.google.com/forms/d/e/1FAIpQLSdABC123xyz456/viewform?";
+      const query = new URLSearchParams({
+        "entry.111111111": dados.produto || "",
+        "entry.222222222": dados.qtd || ""
+      });
+      window.location.href = formBase + query.toString();
+    }
+
+    new Html5Qrcode("reader").start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      (decodedText, decodedResult) => {
+        const dados = parseData(decodedText);
+        redirecionarParaForms(dados);
+      },
+      errorMessage => {
+        // console.warn(errorMessage);
+      }
+    );
+  </script>
+</body>
+</html>
