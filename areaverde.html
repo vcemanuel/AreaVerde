@@ -9,21 +9,10 @@
   <div id="reader" style="width: 300px;"></div>
 
   <script>
-    function parseData(qrText) {
-      const dados = {};
-      const partes = qrText.split(";");
-      partes.forEach(parte => {
-        const [chave, valor] = parte.split("=");
-        if (chave && valor) dados[chave.trim()] = valor.trim();
-      });
-      return dados;
-    }
-
-    function redirecionarParaForms(dados) {
-      const formBase = "https://docs.google.com/forms/d/e/1FAIpQLSdABC123xyz456/viewform?";
+    function redirecionarParaForms(textoQR) {
+      const formBase = "https://docs.google.com/forms/d/e/1FAIpQLSf4N93ZJX7x6nZ2A5kofXjX4b0qs2GrMISoArwtubxZc6JLTA/viewform?";
       const query = new URLSearchParams({
-        "entry.111111111": dados.produto || "",
-        "entry.222222222": dados.qtd || ""
+        "entry.123456789": textoQR  // Substitua esse entry pelo correto
       });
       window.location.href = formBase + query.toString();
     }
@@ -32,8 +21,7 @@
       { facingMode: "environment" },
       { fps: 10, qrbox: 250 },
       (decodedText, decodedResult) => {
-        const dados = parseData(decodedText);
-        redirecionarParaForms(dados);
+        redirecionarParaForms(decodedText);
       },
       errorMessage => {
         // console.warn(errorMessage);
