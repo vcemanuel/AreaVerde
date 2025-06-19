@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro de Produto</title>
   <style>
     body {
@@ -27,33 +28,39 @@
     }
     .container {
       background: white;
-      padding: 30px;
-      max-width: 600px;
-      margin: 30px auto;
+      padding: 20px;
+      margin: 20px;
       border-radius: 10px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    }
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
     }
     label {
       font-weight: bold;
       display: block;
-      margin-top: 10px;
+      margin-top: 12px;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
     }
     button {
       background-color: #2e7d32;
       color: white;
       cursor: pointer;
-      transition: background-color 0.3s;
+      margin-top: 20px;
     }
     button:hover {
       background-color: #1b5e20;
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin: 10px;
+        padding: 15px;
+      }
     }
   </style>
 </head>
@@ -119,7 +126,7 @@
       "20005667": "CERVEJARIA AMBEV PO 0,19",
       "20005668": "COLORADO TO 0,19",
       "20005669": "GA 290ML PO 0,19",
-      "20005670": "GOOSE ISL TO  0,19",
+      "20005670": "GOOSE ISL TO 0,19",
       "20005671": "MAGNIFICA WBA PO 0,19",
       "20005672": "NOSSA PERN WBA PO 0,19",
       "20005673": "PATAGONIA TO 0,19",
