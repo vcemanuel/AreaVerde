@@ -1,42 +1,184 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <title>Leitor QR → Google Forms</title>
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <meta charset="UTF-8">
+  <title>Registro de Produto</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f0f0f0;
+      color: #333;
+    }
+    header {
+      background-color: #2e7d32;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .subheader {
+      background-color: #424242;
+      color: #fff;
+      text-align: center;
+      padding: 10px;
+      font-size: 18px;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      max-width: 600px;
+      margin: 30px auto;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    button {
+      background-color: #2e7d32;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #1b5e20;
+    }
+  </style>
 </head>
 <body>
-  <h2>Escaneie o QR Code</h2>
-  <div id="reader" style="width: 300px;"></div>
+  <header>Fechamento de Área Verde</header>
+  <div class="subheader">Rolhas Crowns</div>
+
+  <div class="container">
+    <label for="data">Data:</label>
+    <input type="date" id="data">
+
+    <label for="linha">Linha:</label>
+    <input type="text" id="linha" placeholder="Ex: A01">
+
+    <label for="codigo">Código do Produto:</label>
+    <input type="text" id="codigo" placeholder="Ex: 20001732" oninput="preencherProduto()">
+
+    <label for="produto">Nome do Produto:</label>
+    <input type="text" id="produto" readonly>
+
+    <label for="lote">Lote:</label>
+    <input type="text" id="lote">
+
+    <label for="paletes">Qtd de Paletes:</label>
+    <input type="number" id="paletes">
+
+    <label for="fracao">Fração (separar por vírgula se houver mais de uma):</label>
+    <input type="text" id="fracao">
+
+    <button onclick="salvarDados()">Salvar Registro</button>
+    <button onclick="finalizarContagem()">Finalizar Contagem</button>
+  </div>
 
   <script>
-    function redirecionarParaForms(textoQR) {
-      const linha = textoQR.substring(0, 2);
-      const lote = textoQR.substring(2, 5);
-      const codigo = textoQR.substring(5, 13);
-      const produto = textoQR.substring(13).trim();
+    const baseProdutos = {
+      "20001732": "FOLHA LITOG ANTARCTICA 0,21 PRY OFF",
+      "20001926": "SKOL MONOLAB PO 0,19",
+      "20005437": "BRAHMA CHOPP PO 0,19",
+      "20005465": "ANTARCTICA PO 0,19",
+      "20005466": "BECKS BRASIL 0,19",
+      "20005467": "BECKS BRASIL 0,19",
+      "20005468": "BC CHOPP QR CODE PO 0,19",
+      "20005485": "STELLA ARTOIS 0,19 TO",
+      "20005486": "STELLA ARTOIS 0,19 PO",
+      "20005490": "BUDWEISER CDL 0,19",
+      "20005499": "BRAHMA DUPLO MALTE PO 0,19",
+      "20005500": "CORONA BRASIL PO 0,19",
+      "20005501": "BUDWEISER CDL 0,19",
+      "20005631": "BOHEMIA PM TO 0,19",
+      "20005632": "BOHEMIA PM PO 0,19",
+      "20005633": "BRAHMA TO 0,19",
+      "20005644": "BRAHMA 340 PY PO 0,19",
+      "20005645": "BRAHMA ZERO PO 0,19",
+      "20005646": "COLORADO PO 0,19",
+      "20005647": "GA 1L RET PO 0,19",
+      "20005648": "HUARI BOL PO 0,19",
+      "20005649": "NORTENA URUGUAY PO 0,19",
+      "20005650": "PATAGONIA PO 0,19",
+      "20005651": "STELLA ARTOIS CHILLE TO 0,19",
+      "20005652": "WALS TO 0,19",
+      "20005665": "BRAHMA REFRESH PO 0,19",
+      "20005666": "CBN BOL PO 0,19",
+      "20005667": "CERVEJARIA AMBEV PO 0,19",
+      "20005668": "COLORADO TO 0,19",
+      "20005669": "GA 290ML PO 0,19",
+      "20005670": "GOOSE ISL TO  0,19",
+      "20005671": "MAGNIFICA WBA PO 0,19",
+      "20005672": "NOSSA PERN WBA PO 0,19",
+      "20005673": "PATAGONIA TO 0,19",
+      "20005674": "PEPSI 1L PO 0,19"
+    };
 
-      // Substitua abaixo com os entry.xxxxx reais do seu formulário
-      const formBase = "https://docs.google.com/forms/d/e/1FAIpQLSf4N93ZJX7x6nZ2A5kofXjX4b0qs2GrMISoArwtubxZc6JLTA/viewform?";
-      const query = new URLSearchParams({
-        "entry.823678995": linha,     // Linha
-        "entry.1492920749": lote,      // Lote
-        "entry.615737517": codigo,    // Código
-        "entry.81757720": produto    // Produto
-      });
+    const registros = [];
 
-      window.location.href = formBase + query.toString();
+    document.getElementById('data').valueAsDate = new Date();
+
+    function preencherProduto() {
+      const codigo = document.getElementById('codigo').value.trim();
+      const produto = baseProdutos[codigo] || "Produto não encontrado";
+      document.getElementById('produto').value = produto;
     }
 
-    new Html5Qrcode("reader").start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: 250 },
-      (decodedText, decodedResult) => {
-        redirecionarParaForms(decodedText);
-      },
-      errorMessage => {
-        // console.warn(errorMessage);
+    function salvarDados() {
+      const data = document.getElementById('data').value;
+      const linha = document.getElementById('linha').value;
+      const codigo = document.getElementById('codigo').value;
+      const produto = document.getElementById('produto').value;
+      const lote = document.getElementById('lote').value;
+      const paletes = document.getElementById('paletes').value;
+      const fracaoRaw = document.getElementById('fracao').value;
+      const fracaoSoma = fracaoRaw.split(',').reduce((soma, item) => soma + parseFloat(item.trim() || 0), 0);
+
+      registros.push([data, linha, codigo, produto, lote, paletes, fracaoSoma]);
+
+      alert("Registro salvo com sucesso!");
+
+      document.getElementById('linha').value = "";
+      document.getElementById('codigo').value = "";
+      document.getElementById('produto').value = "";
+      document.getElementById('lote').value = "";
+      document.getElementById('paletes').value = "";
+      document.getElementById('fracao').value = "";
+    }
+
+    function finalizarContagem() {
+      if (registros.length === 0) {
+        alert("Nenhum registro salvo.");
+        return;
       }
-    );
+
+      let csvContent = "data,linha,codigo,produto,lote,paletes,fracao\n";
+      registros.forEach(linha => {
+        csvContent += linha.join(",") + "\n";
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'contagem_final.csv';
+      a.click();
+
+      registros.length = 0;
+      alert("Contagem finalizada e salva com sucesso!");
+    }
   </script>
 </body>
 </html>
