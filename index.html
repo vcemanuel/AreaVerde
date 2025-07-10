@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Produto</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+  <header>Fechamento de Área Verde</header>
+  <div class="subheader">Rolhas Crowns</div>
+
+  <div class="container">
+    <label class="required" for="data">Data:</label>
+    <input type="date" id="data">
+
+    <label class="required" for="turno">Turno:</label>
+    <select id="turno" onchange="definirHorario()">
+      <option value="">Selecione o turno</option>
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+    </select>
+
+    <label class="required" for="horario">Horário do Turno:</label>
+    <input type="text" id="horario" readonly placeholder="Será preenchido automaticamente">
+
+    <label class="required" for="linha">Linha:</label>
+    <input type="text" id="linha" placeholder="Ex: A01" oninput="validarNumero(this)">
+
+    <label class="required" for="codigo">Código do Produto:</label>
+    <input type="text" id="codigo" placeholder="Somente números" oninput="validarNumero(this); preencherProduto();">
+
+    <label class="required" for="produto">Nome do Produto:</label>
+    <input type="text" id="produto" readonly>
+
+    <label class="required" for="lote">Lote:</label>
+    <input type="text" id="lote" placeholder="Somente números" oninput="validarNumero(this)">
+
+    <label class="required" for="paletes">Qtd de Paletes:</label>
+    <input type="text" id="paletes" placeholder="Somente números" oninput="validarNumero(this)">
+
+    <label class="required" for="temFracao">Há fração?</label>
+    <select id="temFracao" onchange="exibirCamposFracao()">
+      <option value="">Selecione</option>
+      <option value="Sim">Sim</option>
+      <option value="Não">Não</option>
+    </select>
+
+    <div id="camposFracao" style="display: none;">
+      <label class="required" for="caixas">Qtd de Caixas:</label>
+      <input type="number" id="caixas" placeholder="Ex: 10">
+
+      <label class="required" for="fracao">Fração (separar por vírgula se houver mais de uma):</label>
+      <input type="text" id="fracao" placeholder="Ex: 0.25, 0.5">
+    </div>
+
+    <label class="required" for="local">Local de Alocação:</label>
+    <input type="text" id="local" list="locais" placeholder="Ex: PA 1 ou A033 (Molho)">
+    <datalist id="locais"></datalist>
+
+    <button onclick="enviarParaServidor()">Salvar Registro</button>
+    <div id="mensagem" style="color: green;"></div>
+    <button onclick="gerarPlanilha()">Finalizar Contagem</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
