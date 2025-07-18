@@ -127,7 +127,7 @@ function salvarDados() {
 }
 
 function gerarPlanilha() {
-  fetch("http://localhost:3000/api/finalizar", {
+  fetch("https://areaverde-backend.onrender.com/api/finalizar", {
     method: "POST"
   })
   .then(res => res.json())
@@ -140,7 +140,7 @@ function enviarParaServidor() {
   salvarDados(); // salva localmente
   const ultimoRegistro = registros[registros.length - 1];
 
-  fetch("http://localhost:3000/api/salvar", {
+  fetch("https://areaverde-backend.onrender.com/api/salvar", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
